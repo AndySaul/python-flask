@@ -14,16 +14,17 @@ class Items(Resource):
 
 class Item(Resource):
     def get(self, name):
-        for item in items:
-            if item['name'] == name:
-                return item
-        return {"item": None}, 404
+        item = self._item_with_name(name)
+        return {"item": item}, 200 if item else 404
 
     def post(self, name):
         data = request.get_json()
         item = {"name": name, "price": data["price"]}
         items.append(item)
         return item, 201
+
+    def _item_with_name(self, name):
+        return next(filter(lambda x: x["name"] == name, items), None)
 
 
 api.add_resource(Items, '/items')
