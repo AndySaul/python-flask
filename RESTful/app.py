@@ -43,20 +43,22 @@ class Item(Resource):
 
     @jwt_required()
     def put(self, name):
-        parser = reqparse.RequestParser()
-        parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
-        data = parser.parse_args()
-
+        params = self._parse_params()
         item = self._item_with_name(name)
         if item is None:
-            item = {"Name": name, "price": data["price"]}
+            item = {"name": name, "price": params["price"]}
             items.append(item)
         else:
-            item.update(data)
+            item.update(params)
         return item
 
     def _item_with_name(self, name):
         return next(filter(lambda x: x["name"] == name, items), None)
+
+    def _parse_params(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
+        return parser.parse_args()
 
 
 api.add_resource(Items, "/items")
