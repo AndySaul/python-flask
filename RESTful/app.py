@@ -20,7 +20,7 @@ class Item(Resource):
     def post(self, name):
         item = self._item_with_name(name)
         if item:
-            return {'message': f"An item named '{name}' already exists"}, 400
+            return {"message": f"An item named '{name}' already exists"}, 400
         param = request.get_json()
         item = {"name": name, "price": param["price"]}
         items.append(item)
@@ -30,7 +30,7 @@ class Item(Resource):
         return next(filter(lambda x: x["name"] == name, items), None)
 
 
-api.add_resource(Items, '/items')
-api.add_resource(Item, '/item/<string:name>')
+api.add_resource(Items, "/items")
+api.add_resource(Item, "/item/<string:name>")
 
 app.run(port=5000, debug=True)
