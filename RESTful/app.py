@@ -41,6 +41,17 @@ class Item(Resource):
         items = list(filter(lambda x: x["name"] != name, items))
         return {"message": f"'{name}' item deleted"}
 
+    @jwt_required()
+    def put(self, name):
+        data = request.get_json()
+        item = self._item_with_name(name)
+        if item is None:
+            item = {"Name": name, "price": data["price"]}
+            items.append(item)
+        else:
+            item.update(data)
+        return item
+
     def _item_with_name(self, name):
         return next(filter(lambda x: x["name"] == name, items), None)
 
