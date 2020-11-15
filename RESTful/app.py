@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = "super secret key"
 api = Api(app)
 
-jwt = JWT(app, authenticate, identity) # /auth
+jwt = JWT(app, authenticate, identity)  # /auth
 
 items = []
 
@@ -34,6 +34,12 @@ class Item(Resource):
         item = {"name": name, "price": param["price"]}
         items.append(item)
         return item, 201
+
+    @jwt_required()
+    def delete(self, name):
+        global items
+        items = list(filter(lambda x: x["name"] != name, items))
+        return {"message": f"'{name}' item deleted"}
 
     def _item_with_name(self, name):
         return next(filter(lambda x: x["name"] == name, items), None)
