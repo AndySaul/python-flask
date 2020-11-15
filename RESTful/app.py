@@ -18,8 +18,11 @@ class Item(Resource):
         return {"item": item}, 200 if item else 404
 
     def post(self, name):
-        data = request.get_json()
-        item = {"name": name, "price": data["price"]}
+        item = self._item_with_name(name)
+        if item:
+            return {'message': f"An item named '{name}' already exists"}, 400
+        param = request.get_json()
+        item = {"name": name, "price": param["price"]}
         items.append(item)
         return item, 201
 
