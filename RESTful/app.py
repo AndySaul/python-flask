@@ -30,9 +30,9 @@ class Item(Resource):
         item = self._item_with_name(name)
         if item:
             return {"message": f"An item named '{name}' already exists"}, 400
-        param = request.get_json()
-        item = {"name": name, "price": param["price"]}
-        items.append(item)
+
+        params = self._parse_params()
+        item = self._store_item(name, params["price"])
         return item, 201
 
     @jwt_required()
@@ -46,8 +46,7 @@ class Item(Resource):
         params = self._parse_params()
         item = self._item_with_name(name)
         if item is None:
-            item = {"name": name, "price": params["price"]}
-            items.append(item)
+            item = self._store_item(name, params["price"])
         else:
             item.update(params)
         return item
@@ -59,6 +58,11 @@ class Item(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
         return parser.parse_args()
+
+    def _store_item(self, name, price):
+        item = {"name": name, "price": price}
+        items.append(item)
+        return item
 
 
 api.add_resource(Items, "/items")
