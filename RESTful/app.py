@@ -21,12 +21,12 @@ class Items(Resource):
 
 class Item(Resource):
     @jwt_required()
-    def get(self, name):
+    def get(self, name: str):
         item = self._item_with_name(name)
         return {"item": item}, 200 if item else 404
 
     @jwt_required()
-    def post(self, name):
+    def post(self, name: str):
         item = self._item_with_name(name)
         if item:
             return {"message": f"An item named '{name}' already exists"}, 400
@@ -36,13 +36,13 @@ class Item(Resource):
         return item, 201
 
     @jwt_required()
-    def delete(self, name):
+    def delete(self, name: str):
         global items
         items = list(filter(lambda x: x["name"] != name, items))
         return {"message": f"'{name}' item deleted"}
 
     @jwt_required()
-    def put(self, name):
+    def put(self, name: str):
         params = self._parse_params()
         item = self._item_with_name(name)
         if item is None:
@@ -51,7 +51,7 @@ class Item(Resource):
             item.update(params)
         return item
 
-    def _item_with_name(self, name):
+    def _item_with_name(self, name: str):
         return next(filter(lambda x: x["name"] == name, items), None)
 
     def _parse_params(self):
@@ -59,7 +59,7 @@ class Item(Resource):
         parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
         return parser.parse_args()
 
-    def _store_item(self, name, price):
+    def _store_item(self, name: str, price: float):
         item = {"name": name, "price": price}
         items.append(item)
         return item
