@@ -42,14 +42,18 @@ class User:
 class RegisterUser(Resource):
 
     def post(self):
+        self._create_user_table()
+
+        params = self._parse_params()
+
+        user = User.find_by_username(params['username'])
+        if user:
+            return {'message': "User already registered"}, 400
+
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        create_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)"
-        cursor.execute(create_table)
-
         query = "INSERT INTO users VALUES (NULL, ?, ?)"
-        params = self._parse_params()
         args = (params['username'], params['password'])
         cursor.execute(query, args)
 
@@ -57,6 +61,17 @@ class RegisterUser(Resource):
         connection.close()
 
         return {'message': "User created successfully"}, 201
+
+    def _create_user_table(self):
+
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        create_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)"
+        cursor.execute(create_table)
+
+        connection.commit()
+        connection.close()
 
     @staticmethod
     def _parse_params():
