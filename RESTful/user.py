@@ -11,19 +11,18 @@ class User:
 
     @classmethod
     def find_by_username(cls, username):
-        with Database() as db:
-            query = "SELECT * FROM users WHERE username=?"
-            result = db.execute(query, (username,))
-            row = result.fetchone()
-            if row:
-                return cls(*row)
-        return None
+        query = "SELECT * FROM users WHERE username=?"
+        return cls._find(query, username)
 
     @classmethod
     def find_by_id(cls, _id):
+        query = "SELECT * FROM users WHERE id=?"
+        return cls._find(query, _id)
+
+    @classmethod
+    def _find(cls, query, param):
         with Database() as db:
-            query = "SELECT * FROM users WHERE id=?"
-            result = db.execute(query, (_id,))
+            result = db.execute(query, (param,))
             row = result.fetchone()
             if row:
                 return cls(*row)
