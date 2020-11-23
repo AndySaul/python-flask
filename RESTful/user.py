@@ -11,16 +11,14 @@ class User:
 
     @classmethod
     def find_by_username(cls, username):
-        query = "SELECT * FROM users WHERE username=?"
-        return cls._find(query, username)
+        return cls._find_user("SELECT * FROM users WHERE username=?", username)
 
     @classmethod
     def find_by_id(cls, _id):
-        query = "SELECT * FROM users WHERE id=?"
-        return cls._find(query, _id)
+        return cls._find_user("SELECT * FROM users WHERE id=?", _id)
 
     @classmethod
-    def _find(cls, query, param):
+    def _find_user(cls, query, param):
         with Database() as db:
             result = db.execute(query, (param,))
             row = result.fetchone()
@@ -31,8 +29,7 @@ class User:
     @classmethod
     def create_table(cls):
         with Database() as db:
-            create_table = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)"
-            db.execute(create_table)
+            db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)")
 
 
 class RegisterUser(Resource):
