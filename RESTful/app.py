@@ -5,19 +5,26 @@ from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 from user import RegisterUser
 
-app = Flask(__name__)
-app.secret_key = "super secret key"
-api = Api(app)
 
-jwt = JWT(app, authenticate, identity)  # /auth
+class App(Flask):
+    def __init__(self):
+        super().__init__(__name__)
+        self.secret_key = "super secret key"
+        self._api = Api(self)
+        self.jwt = JWT(self, authenticate, identity)  # /auth
 
+    def add_resource(self, resource, url):
+        self._api.add_resource(resource, url)
+
+
+app = App()
 items = []
 
 
 def main():
-    api.add_resource(Items, '/items')
-    api.add_resource(Item, '/item/<string:name>')
-    api.add_resource(RegisterUser, '/register')
+    app.add_resource(Items, '/items')
+    app.add_resource(Item, '/item/<string:name>')
+    app.add_resource(RegisterUser, '/register')
     app.run(port=5000, debug=True)
 
 
