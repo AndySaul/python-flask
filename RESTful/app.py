@@ -14,6 +14,13 @@ jwt = JWT(app, authenticate, identity)  # /auth
 items = []
 
 
+def main():
+    api.add_resource(Items, '/items')
+    api.add_resource(Item, '/item/<string:name>')
+    api.add_resource(RegisterUser, '/register')
+    app.run(port=5000, debug=True)
+
+
 class Items(Resource):
     @jwt_required()
     def get(self):
@@ -66,7 +73,5 @@ class Item(Resource):
         return item
 
 
-api.add_resource(Items, '/items')
-api.add_resource(Item, '/item/<string:name>')
-api.add_resource(RegisterUser, '/register')
-app.run(port=5000, debug=True)
+if __name__ == "__main__":
+    main()
