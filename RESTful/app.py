@@ -24,6 +24,7 @@ class App(Flask):
 
     def _init_tables(self):
         User.create_table()
+        Items.create_table()
 
 
 def main():

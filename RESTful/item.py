@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
-items = []
+from database import Database
 
 
 class Items(Resource):
@@ -9,12 +9,22 @@ class Items(Resource):
     def get(self):
         return {"items": items}
 
+    @classmethod
+    def create_table(cls):
+        with Database() as db:
+            db.execute("CREATE TABLE IF NOT EXISTS items (name text, price real)")
+
 
 class Item(Resource):
     @jwt_required()
     def get(self, name: str):
-        item = self._item_with_name(name)
-        return {"item": item}, 200 if item else 404
+        with Database() as db:
+            query = "SELECT * FROM items WHERE name=?"
+            result = db.execute(query, (name,))
+            row = result.fetchone()
+            if row:
+                return {'item': {'name': row[0], 'price': row[1]}}
+        return {'message': 'Item not found'}, 404
 
     @jwt_required()
     def post(self, name: str):
