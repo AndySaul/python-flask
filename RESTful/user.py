@@ -35,8 +35,6 @@ class User:
 class RegisterUser(Resource):
 
     def post(self):
-        User.create_table()
-
         params = self._parse_params()
         if User.find_by_username(params['username']):
             return {'message': "User already registered"}, 400
