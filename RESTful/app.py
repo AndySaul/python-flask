@@ -10,21 +10,20 @@ from item import Item, Items
 class App(Flask):
     def __init__(self):
         super().__init__(__name__)
-        self.secret_key = "super secret key"
-        self._api = Api(self)
+        self.secret_key = "super secret key"  # todo accept a key string
         self.jwt = JWT(self, authenticate, identity)  # /auth
+        self._api = self._init_api()
 
-    def add_resource(self, resource, url):
-        self._api.add_resource(resource, url)
-
-
-app = App()
+    def _init_api(self):
+        api = Api(self)
+        api.add_resource(Items, '/items')
+        api.add_resource(Item, '/item/<string:name>')
+        api.add_resource(RegisterUser, '/register')
+        return api
 
 
 def main():
-    app.add_resource(Items, '/items')
-    app.add_resource(Item, '/item/<string:name>')
-    app.add_resource(RegisterUser, '/register')
+    app = App()
     app.run(port=5000, debug=True)
 
 
