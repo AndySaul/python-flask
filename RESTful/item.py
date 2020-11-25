@@ -18,12 +18,9 @@ class Items(Resource):
 class Item(Resource):
     @jwt_required()
     def get(self, name: str):
-        with Database() as db:
-            query = "SELECT * FROM items WHERE name=?"
-            result = db.execute(query, (name,))
-            row = result.fetchone()
-            if row:
-                return {'item': {'name': row[0], 'price': row[1]}}
+        item = self._item_with_name(name)
+        if item:
+            return item
         return {'message': 'Item not found'}, 404
 
     @jwt_required()
@@ -38,8 +35,8 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name: str):
-        global items
-        items = list(filter(lambda x: x["name"] != name, items))
+        with Database() as db:
+            db.execute("DELETE FROM items WHERE name=?", (name,))
         return {"message": f"'{name}' item deleted"}
 
     @jwt_required()
@@ -52,8 +49,14 @@ class Item(Resource):
             item.update(params)
         return item
 
-    def _item_with_name(self, name: str):
-        return next(filter(lambda x: x["name"] == name, items), None)
+    @classmethod
+    def _item_with_name(cls, name: str):
+        with Database() as db:
+            query = "SELECT * FROM items WHERE name=?"
+            result = db.execute(query, (name,))
+            row = result.fetchone()
+            if row:
+                return {'item': {'name': row[0], 'price': row[1]}}
 
     def _parse_params(self):
         parser = reqparse.RequestParser()
@@ -61,6 +64,7 @@ class Item(Resource):
         return parser.parse_args()
 
     def _store_item(self, name: str, price: float):
-        item = {"name": name, "price": price}
-        items.append(item)
-        return item
+        with Database() as db:
+            query = "INSERT INTO items VALUES (?, ?)"
+            db.execute(query, (name, price))
+            return {"name": name, "price": price}
