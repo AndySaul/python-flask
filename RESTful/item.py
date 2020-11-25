@@ -7,7 +7,12 @@ from database import Database
 class Items(Resource):
     @jwt_required()
     def get(self):
-        return {"items": items}
+        with Database() as db:
+            result = db.execute("SELECT * FROM items")
+            items = []
+            for row in result:
+                items.append({"name": row[0], "price": row[1]})
+            return {"items": items}
 
     @classmethod
     def create_table(cls):
@@ -44,9 +49,15 @@ class Item(Resource):
         params = self._parse_params()
         item = self._item_with_name(name)
         if item is None:
-            item = self._store_item(name, params["price"])
+            try:
+                item = self._store_item(name, params['price'])
+            except:
+                return {"message": "An error occurred inserting this item"}, 500
         else:
-            item.update(params)
+            try:
+                item = self._update(name, params['price'])
+            except:
+                return {"message": "An error occurred updating this item"}, 500
         return item
 
     @classmethod
@@ -68,3 +79,9 @@ class Item(Resource):
             query = "INSERT INTO items VALUES (?, ?)"
             db.execute(query, (name, price))
             return {"name": name, "price": price}
+
+    @classmethod
+    def _update(cls, name, price):
+        with Database() as db:
+            db.execute("UPDATE items SET price=? WHERE name=?", (price, name))
+        return {"name": name, "price": price}
