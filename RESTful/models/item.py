@@ -15,23 +15,19 @@ class ItemModel:
             db.execute("CREATE TABLE IF NOT EXISTS items (name text, price real)")
 
     @classmethod
-    def with_name(cls, name: str):
+    def find_by_name(cls, name: str):
         with Database() as db:
             query = "SELECT * FROM items WHERE name=?"
             result = db.execute(query, (name,))
             row = result.fetchone()
             if row:
-                return {'item': {'name': row[0], 'price': row[1]}}
+                return cls(*row)
 
-    @classmethod
-    def update(cls, name, price):
+    def update(self):
         with Database() as db:
-            db.execute("UPDATE items SET price=? WHERE name=?", (price, name))
-        return {"name": name, "price": price}
+            db.execute("UPDATE items SET price=? WHERE name=?", (self.price, self.name))
 
-    @classmethod
-    def store(self, name: str, price: float):
+    def insert(self):
         with Database() as db:
             query = "INSERT INTO items VALUES (?, ?)"
-            db.execute(query, (name, price))
-            return {"name": name, "price": price}
+            db.execute(query, (self.name, self.price))

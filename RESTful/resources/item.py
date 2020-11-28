@@ -19,20 +19,24 @@ class Items(Resource):
 class Item(Resource):
     @jwt_required()
     def get(self, name: str):
-        item = ItemModel.with_name(name)
+        item = ItemModel.find_by_name(name)
         if item:
-            return item
+            return item.json()
         return {'message': 'Item not found'}, 404
 
     @jwt_required()
     def post(self, name: str):
-        item = ItemModel.with_name(name)
+        item = ItemModel.find_by_name(name)
         if item:
             return {"message": f"An item named '{name}' already exists"}, 400
 
         params = self._parse_params()
-        item = ItemModel.store(name, params["price"])
-        return item, 201
+        item = ItemModel(name, params["price"])
+        try:
+            item.insert()
+        except:
+            return {"message": "An error occurred inserting the item."}, 500
+        return item.json(), 201
 
     @jwt_required()
     def delete(self, name: str):
@@ -43,18 +47,19 @@ class Item(Resource):
     @jwt_required()
     def put(self, name: str):
         params = self._parse_params()
-        item = ItemModel.with_name(name)
-        if item is None:
+        item = ItemModel(name, params['price'])
+
+        if not ItemModel.find_by_name(name):
             try:
-                item = ItemModel.store(name, params['price'])
+                item.insert()
             except:
                 return {"message": "An error occurred inserting this item"}, 500
         else:
             try:
-                item = ItemModel.update(name, params['price'])
+                item.update()
             except:
                 return {"message": "An error occurred updating this item"}, 500
-        return item
+        return item.json()
 
     def _parse_params(self):
         parser = reqparse.RequestParser()
