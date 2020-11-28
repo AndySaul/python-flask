@@ -5,6 +5,7 @@ from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 from resources.user import RegisterUser, User
 from resources.item import Item, Items
+from models.item import ItemModel
 
 
 class App(Flask):
@@ -24,7 +25,7 @@ class App(Flask):
 
     def _init_tables(self):
         User.create_table()
-        Items.create_table()
+        ItemModel.create_table()
 
 
 def main():
