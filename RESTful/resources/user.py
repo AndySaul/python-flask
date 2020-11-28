@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 
-from database import Database
+from resources.database import Database
 
 
 class User:

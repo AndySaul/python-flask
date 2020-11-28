@@ -1,4 +1,4 @@
-from user import User
+from resources.user import User
 
 users = [User(1, "Bob", "wombat")]
 

@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
-from database import Database
+from resources.database import Database
 
 
 class Items(Resource):

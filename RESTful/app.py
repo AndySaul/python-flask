@@ -3,8 +3,8 @@ from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 
 from security import authenticate, identity
-from user import RegisterUser, User
-from item import Item, Items
+from resources.user import RegisterUser, User
+from resources.item import Item, Items
 
 
 class App(Flask):
