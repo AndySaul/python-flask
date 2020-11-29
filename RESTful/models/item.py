@@ -15,6 +15,16 @@ class ItemModel:
             db.execute("CREATE TABLE IF NOT EXISTS items (name text, price real)")
 
     @classmethod
+    def all_items(cls):
+        with Database() as db:
+            result = db.execute("SELECT * FROM items")
+            items = []
+            for row in result:
+                item = cls(*row)
+                items.append(item.json())
+            return {"items": items}
+
+    @classmethod
     def find_by_name(cls, name: str):
         with Database() as db:
             query = "SELECT * FROM items WHERE name=?"

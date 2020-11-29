@@ -1,20 +1,13 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
-from resources.database import Database
 from models.item import ItemModel
 
 
 class Items(Resource):
     @jwt_required()
     def get(self):
-        with Database() as db:
-            result = db.execute("SELECT * FROM items")
-            items = []
-            for row in result:
-                item = ItemModel(*row)
-                items.append(item.json())
-            return {"items": items}
+        return ItemModel.all_items()
 
 
 class Item(Resource):
