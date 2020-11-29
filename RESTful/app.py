@@ -11,6 +11,7 @@ from resources.item import Item, Items
 class App(Flask):
     def __init__(self):
         super().__init__(__name__)
+        self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.secret_key = "super secret key"  # todo accept a key string
         self.jwt = JWT(self, authenticate, identity)  # /auth
         self._api = self._init_api()
