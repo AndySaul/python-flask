@@ -1,16 +1,16 @@
 from flask_restful import Resource, reqparse
 
-from models.user import User
+from models.user import UserModel
 
 
 class RegisterUser(Resource):
 
     def post(self):
         params = self._parse_params()
-        if User.find_by_username(params['username']):
+        if UserModel.find_by_username(params['username']):
             return {'message': "User already registered"}, 400
 
-        user = User(**params)
+        user = UserModel(**params)
         user.save_to_db()
         return {'message': "User created successfully"}, 201
 
