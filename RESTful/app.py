@@ -7,27 +7,28 @@ from security import authenticate, identity
 from resources.user import RegisterUser
 from resources.item import Item, Items
 
+app = Flask(__name__)
 
-class App(Flask):
-    def __init__(self):
-        super().__init__(__name__)
-        self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-        self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        self.secret_key = "super secret key"  # todo accept a key string
-        self.jwt = JWT(self, authenticate, identity)  # /auth
-        self._api = self._init_api()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    def _init_api(self):
-        api = Api(self)
-        api.add_resource(Items, '/items')
-        api.add_resource(Item, '/item/<string:name>')
-        api.add_resource(RegisterUser, '/register')
-        return api
+app.secret_key = "super secret key"
+jwt = JWT(app, authenticate, identity)  # /auth
+
+api = Api(app)
+api.add_resource(Items, '/items')
+api.add_resource(Item, '/item/<string:name>')
+api.add_resource(RegisterUser, '/register')
+
+db.init_app(app)
+
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 def main():
-    app = App()
-    db.init_app(app)
     app.run(port=5000, debug=True)
 
 
