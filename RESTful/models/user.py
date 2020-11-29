@@ -1,4 +1,3 @@
-from resources.database import Database
 from db import db
 
 
@@ -8,24 +7,18 @@ class User(db.Model):
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
-    def __init__(self, _id, username: str, password: str):
-        self.id = _id
+    def __init__(self, username: str, password: str):
         self.username = username
         self.password = password
 
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
     @classmethod
     def find_by_username(cls, username):
-        return cls._find_user("SELECT * FROM users WHERE username=?", username)
+        return cls.query.filter_by(username=username).first()
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls._find_user("SELECT * FROM users WHERE id=?", _id)
-
-    @classmethod
-    def _find_user(cls, query, param):
-        with Database() as database:
-            result = database.execute(query, (param,))
-            row = result.fetchone()
-            if row:
-                return cls(*row)
-        return None
+        return cls.query.filter_by(id=_id).first()

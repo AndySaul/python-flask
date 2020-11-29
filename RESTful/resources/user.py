@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
 
-from resources.database import Database
 from models.user import User
 
 
@@ -11,10 +10,8 @@ class RegisterUser(Resource):
         if User.find_by_username(params['username']):
             return {'message': "User already registered"}, 400
 
-        with Database() as db:
-            query = "INSERT INTO users VALUES (NULL, ?, ?)"
-            args = (params['username'], params['password'])
-            db.execute(query, args)
+        user = User(**params)
+        user.save_to_db()
         return {'message': "User created successfully"}, 201
 
     @staticmethod
