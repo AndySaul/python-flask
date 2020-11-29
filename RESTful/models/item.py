@@ -10,11 +10,6 @@ class ItemModel:
         return {'name': self.name, 'price': self.price}
 
     @classmethod
-    def create_table(cls):
-        with Database() as db:
-            db.execute("CREATE TABLE IF NOT EXISTS items (name text, price real)")
-
-    @classmethod
     def all_items(cls):
         with Database() as db:
             result = db.execute("SELECT * FROM items")
@@ -45,4 +40,3 @@ class ItemModel:
     def remove(self):
         with Database() as db:
             db.execute("DELETE FROM items WHERE name=?", (self.name,))
-

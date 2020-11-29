@@ -5,7 +5,6 @@ from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 from resources.user import RegisterUser, User
 from resources.item import Item, Items
-from models.item import ItemModel
 
 
 class App(Flask):
@@ -14,7 +13,6 @@ class App(Flask):
         self.secret_key = "super secret key"  # todo accept a key string
         self.jwt = JWT(self, authenticate, identity)  # /auth
         self._api = self._init_api()
-        self._init_tables()
 
     def _init_api(self):
         api = Api(self)
@@ -22,10 +20,6 @@ class App(Flask):
         api.add_resource(Item, '/item/<string:name>')
         api.add_resource(RegisterUser, '/register')
         return api
-
-    def _init_tables(self):
-        User.create_table()
-        ItemModel.create_table()
 
 
 def main():

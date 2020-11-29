@@ -23,8 +23,3 @@ class User:
             if row:
                 return cls(*row)
         return None
-
-    @classmethod
-    def create_table(cls):
-        with Database() as db:
-            db.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username text, password text)")
