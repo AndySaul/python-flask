@@ -23,8 +23,8 @@ class User(db.Model):
 
     @classmethod
     def _find_user(cls, query, param):
-        with Database() as db:
-            result = db.execute(query, (param,))
+        with Database() as database:
+            result = database.execute(query, (param,))
             row = result.fetchone()
             if row:
                 return cls(*row)
