@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
 
+from db import db
 from security import authenticate, identity
 from resources.user import RegisterUser, User
 from resources.item import Item, Items
@@ -24,6 +25,7 @@ class App(Flask):
 
 def main():
     app = App()
+    db.init_app(app)
     app.run(port=5000, debug=True)
 
 
