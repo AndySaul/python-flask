@@ -12,7 +12,8 @@ class Items(Resource):
             result = db.execute("SELECT * FROM items")
             items = []
             for row in result:
-                items.append({"name": row[0], "price": row[1]})
+                item = ItemModel(*row)
+                items.append(item.json())
             return {"items": items}
 
 
