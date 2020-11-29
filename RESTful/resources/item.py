@@ -24,7 +24,7 @@ class Item(Resource):
         if item:
             return {"message": "Item already exists"}, 400
 
-        params = self.parse_params()
+        params = parse_params()
         item = ItemModel(name, **params)
         try:
             item.save_to_db()
@@ -41,7 +41,7 @@ class Item(Resource):
 
     @jwt_required()
     def put(self, name: str):
-        params = self.parse_params()
+        params = parse_params()
         item = ItemModel.find_by_name(name)
 
         if not item:
@@ -52,9 +52,9 @@ class Item(Resource):
         item.save_to_db()
         return item.json()
 
-    @staticmethod
-    def parse_params():
-        parser = reqparse.RequestParser()
-        parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
-        parser.add_argument("store_id", type=int, required=True, help="Every item needs a store id")
-        return parser.parse_args()
+
+def parse_params():
+    parser = reqparse.RequestParser()
+    parser.add_argument("price", type=float, required=True, help="Price cannot be blank")
+    parser.add_argument("store_id", type=int, required=True, help="Every item needs a store id")
+    return parser.parse_args()

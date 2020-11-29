@@ -6,7 +6,7 @@ from models.user import UserModel
 class RegisterUser(Resource):
 
     def post(self):
-        params = self._parse_params()
+        params = parse_params()
         if UserModel.find_by_username(params['username']):
             return {'message': "User already registered"}, 400
 
@@ -14,9 +14,9 @@ class RegisterUser(Resource):
         user.save_to_db()
         return {'message': "User created successfully"}, 201
 
-    @staticmethod
-    def _parse_params():
-        parser = reqparse.RequestParser()
-        parser.add_argument("username", type=str, required=True)
-        parser.add_argument("password", type=str, required=True)
-        return parser.parse_args()
+
+def parse_params():
+    parser = reqparse.RequestParser()
+    parser.add_argument("username", type=str, required=True)
+    parser.add_argument("password", type=str, required=True)
+    return parser.parse_args()
