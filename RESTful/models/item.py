@@ -1,4 +1,3 @@
-from resources.database import Database
 from db import db
 
 
@@ -14,16 +13,6 @@ class ItemModel(db.Model):
 
     def json(self):
         return {'name': self.name, 'price': self.price}
-
-    @classmethod
-    def all_items(cls):
-        with Database() as database:
-            result = database.execute("SELECT * FROM items")
-            items = []
-            for row in result:
-                item = cls(*row)
-                items.append(item.json())
-            return {"items": items}
 
     @classmethod
     def find_by_name(cls, name: str):
