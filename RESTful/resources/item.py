@@ -22,37 +22,33 @@ class Item(Resource):
     def post(self, name: str):
         item = ItemModel.find_by_name(name)
         if item:
-            return {"message": f"An item named '{name}' already exists"}, 400
+            return {"message": "Item already exists"}, 400
 
         params = self._parse_params()
         item = ItemModel(name, params["price"])
         try:
-            item.insert()
+            item.save_to_db()
         except:
             return {"message": "An error occurred inserting the item."}, 500
         return item.json(), 201
 
     @jwt_required()
     def delete(self, name: str):
-        item = ItemModel(name, None)
-        item.remove()
-        return {"message": f"'{name}' item deleted"}
+        item = ItemModel.find_by_name(name)
+        if item:
+            item.delete_from_db()
+        return {"message": "'tem deleted"}
 
     @jwt_required()
     def put(self, name: str):
         params = self._parse_params()
-        item = ItemModel(name, params['price'])
+        item = ItemModel.find_by_name(name)
 
-        if not ItemModel.find_by_name(name):
-            try:
-                item.insert()
-            except:
-                return {"message": "An error occurred inserting this item"}, 500
+        if not item:
+            item = ItemModel(name, params['price'])
         else:
-            try:
-                item.update()
-            except:
-                return {"message": "An error occurred updating this item"}, 500
+            item.price = params['price']
+        item.save_to_db()
         return item.json()
 
     def _parse_params(self):

@@ -27,22 +27,11 @@ class ItemModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name: str):
-        with Database() as database:
-            query = "SELECT * FROM items WHERE name=?"
-            result = database.execute(query, (name,))
-            row = result.fetchone()
-            if row:
-                return cls(*row)
+        return cls.query.filter_by(name=name).first()
 
-    def update(self):
-        with Database() as database:
-            database.execute("UPDATE items SET price=? WHERE name=?", (self.price, self.name))
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
-    def insert(self):
-        with Database() as database:
-            query = "INSERT INTO items VALUES (?, ?)"
-            database.execute(query, (self.name, self.price))
-
-    def remove(self):
-        with Database() as database:
-            database.execute("DELETE FROM items WHERE name=?", (self.name,))
+    def delete_from_db(self):
+        db.session.delete(self)
