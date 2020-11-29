@@ -41,8 +41,8 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name: str):
-        with Database() as db:
-            db.execute("DELETE FROM items WHERE name=?", (name,))
+        item = ItemModel(name, None)
+        item.remove()
         return {"message": f"'{name}' item deleted"}
 
     @jwt_required()

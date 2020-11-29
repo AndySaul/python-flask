@@ -31,3 +31,8 @@ class ItemModel:
         with Database() as db:
             query = "INSERT INTO items VALUES (?, ?)"
             db.execute(query, (self.name, self.price))
+
+    def remove(self):
+        with Database() as db:
+            db.execute("DELETE FROM items WHERE name=?", (self.name,))
+
