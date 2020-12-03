@@ -1,3 +1,5 @@
+# Copyright (c) Andy Saul 2020
+
 from db import db
 
 

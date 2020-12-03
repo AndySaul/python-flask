@@ -1,3 +1,5 @@
+# Copyright (c) Andy Saul 2020
+
 from flask_restful import Resource
 from flask_jwt import jwt_required
 

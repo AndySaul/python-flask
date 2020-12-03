@@ -1,3 +1,5 @@
+# Copyright (c) Andy Saul 2020
+
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
@@ -6,6 +8,8 @@ from db import db
 from security import authenticate, identity
 from resources.user import RegisterUser
 from resources.item import Item, Items
+# Copyright (c) Andy Saul 2020
+
 from resources.store import Store, Stores
 
 app = Flask(__name__)
