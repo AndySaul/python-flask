@@ -1,5 +1,7 @@
 # Copyright (c) Andy Saul 2020
 
+import os
+
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
@@ -8,13 +10,11 @@ from db import db
 from security import authenticate, identity
 from resources.user import RegisterUser
 from resources.item import Item, Items
-# Copyright (c) Andy Saul 2020
-
 from resources.store import Store, Stores
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.secret_key = "super secret key"
