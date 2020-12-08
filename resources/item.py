@@ -9,7 +9,7 @@ from models.item import ItemModel
 class Items(Resource):
     @jwt_required()
     def get(self):
-        return {'items': [item.json() for item in ItemModel.query.all()]}
+        return {'items': [item.json() for item in ItemModel.find_all()]}
 
 
 class Item(Resource):
