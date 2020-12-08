@@ -20,6 +20,15 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = "super secret key"
 jwt = JWTManager(app)
 
+
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    # TODO: Get admin from db or config
+    if identity == 1:
+        return {'is_admin': True}
+    return {'is_admin': False}
+
+
 api = Api(app)
 api.add_resource(RegisterUser, '/register')
 api.add_resource(User, '/user/<int:user_id>')
