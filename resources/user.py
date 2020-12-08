@@ -1,6 +1,7 @@
 # Copyright (c) Andy Saul 2020
 
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 from models.user import UserModel
 
@@ -23,6 +24,7 @@ def parse_params():
     parser.add_argument("password", type=str, required=True)
     return parser.parse_args()
 
+
 class User(Resource):
     @classmethod
     def get(cls, user_id):
@@ -40,3 +42,15 @@ class User(Resource):
         user.delete_from_db()
         return {'message': 'User deleted'}, 200
 
+
+class UserLogin(Resource):
+
+    @classmethod
+    def post(cls):
+        params = parse_params()
+        user = UserModel.find_by_username(params['username'])
+        if user and params['password'] == user.password:
+            access_token = create_access_token(identity=user.id, fresh=True)
+            refresh_token = create_refresh_token(user.id)
+            return {'access_token': access_token, 'refresh_token': refresh_token}, 200
+        return {'message': 'Invalid credentials'}, 401
