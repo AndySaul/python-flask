@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
@@ -27,6 +27,46 @@ def add_claims_to_jwt(identity):
     if identity == 1:
         return {'is_admin': True}
     return {'is_admin': False}
+
+
+@jwt.expired_token_loader
+def expired_token():
+    return jsonify({
+        'description': 'The token has expired',
+        'error': 'token_expired'
+    }), 401
+
+
+@jwt.invalid_token_loader
+def invalid_token(error):
+    return jsonify({
+        'description': 'Signature verification failed',
+        'error': 'invalid_token'
+    }), 401
+
+
+@jwt.unauthorized_loader
+def missing_token(error):
+    return jsonify({
+        'description': 'Request does not contain an access token',
+        'error': 'authorization_required'
+    }), 401
+
+
+@jwt.needs_fresh_token_loader
+def needs_fresh_token(error):
+    return jsonify({
+        'description': 'Request does not contain an access token',
+        'error': 'authorization_required'
+    }), 401
+
+
+@jwt.revoked_token_loader
+def token_revoked():
+    return jsonify({
+        'description': 'The token has been revoked',
+        'error': 'token_revoked'
+    }), 401
 
 
 api = Api(app)
