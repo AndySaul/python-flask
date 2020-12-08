@@ -8,7 +8,7 @@ from flask_jwt import JWT
 
 from db import db
 from security import authenticate, identity
-from resources.user import RegisterUser
+from resources.user import RegisterUser, User
 from resources.item import Item, Items
 from resources.store import Store, Stores
 
@@ -23,6 +23,7 @@ jwt = JWT(app, authenticate, identity)  # /auth
 
 api = Api(app)
 api.add_resource(RegisterUser, '/register')
+api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(Items, '/items')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(Stores, '/stores')
