@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from db import db
-from resources.user import RegisterUser, User, UserLogin
+from resources.user import RegisterUser, User, UserLogin, TokenRefresh
 from resources.item import Item, Items
 from resources.store import Store, Stores
 
@@ -37,6 +37,7 @@ api.add_resource(Items, '/items')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(Stores, '/stores')
 api.add_resource(Store, '/store/<string:name>')
+api.add_resource(TokenRefresh, '/refresh')
 
 db.init_app(app)
 
