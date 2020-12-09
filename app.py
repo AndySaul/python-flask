@@ -10,12 +10,15 @@ from db import db
 from resources.user import RegisterUser, User, UserLogin, TokenRefresh
 from resources.item import Item, Items
 from resources.store import Store, Stores
+from blocklist import BLOCKLIST
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
 app.secret_key = "super secret key"
 jwt = JWTManager(app)
@@ -35,6 +38,11 @@ def expired_token():
         'description': 'The token has expired',
         'error': 'token_expired'
     }), 401
+
+
+@jwt.token_in_blacklist_loader
+def check_if_blocked(decrypted_token):
+    return decrypted_token['identity'] in BLOCKLIST
 
 
 @jwt.invalid_token_loader
