@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from db import db
-from resources.user import RegisterUser, User, UserLogin, TokenRefresh
+from resources.user import RegisterUser, User, UserLogin, UserLogout, TokenRefresh
 from resources.item import Item, Items
 from resources.store import Store, Stores
 from blocklist import BLOCKLIST
@@ -42,7 +42,7 @@ def expired_token():
 
 @jwt.token_in_blacklist_loader
 def check_if_blocked(decrypted_token):
-    return decrypted_token['identity'] in BLOCKLIST
+    return decrypted_token['jti'] in BLOCKLIST
 
 
 @jwt.invalid_token_loader
@@ -81,6 +81,7 @@ api = Api(app)
 api.add_resource(RegisterUser, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
+api.add_resource(UserLogout, '/logout')
 api.add_resource(Items, '/items')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(Stores, '/stores')
